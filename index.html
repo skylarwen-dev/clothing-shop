@@ -237,7 +237,7 @@
     .detail-list { padding-left: 18px; }
 
     .cart-layout { display: grid; grid-template-columns: 1.2fr .8fr; gap: 22px; }
-    .cart-list, .checkout-box, .profile-box, .admin-box {
+    .cart-list, .checkout-box, .profile-box, .profile-result-card, .admin-box {
       background: #fff;
       border-radius: var(--radius);
       padding: 22px;
@@ -258,6 +258,52 @@
       outline: none;
       background: #fff;
     }
+    .profile-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 22px; align-items: start; }
+    .profile-box { padding: 26px; }
+    .profile-box label { display: block; font-weight: 800; margin: 4px 0 6px; color: #4a403c; }
+    .profile-hint { margin: -4px 0 16px; color: #8a7a73; font-size: 14px; }
+    .profile-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .profile-result-card { margin-bottom: 16px; }
+    .profile-result-card h3 { margin: 0 0 10px; font-size: 22px; }
+    .size-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 84px;
+      padding: 12px 18px;
+      border-radius: 20px;
+      background: #2f2a28;
+      color: #fff;
+      font-size: 32px;
+      font-weight: 900;
+      margin: 8px 0 10px;
+    }
+    .summary-list { display: grid; gap: 8px; color: #665954; }
+    .summary-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #fbf3ee;
+    }
+    .recommend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .recommend-card {
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      background: #fbf8f6;
+      border: 1px solid #f0e2dc;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .recommend-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .recommend-img { width: 76px; height: 76px; border-radius: 14px; background: #eee center/cover; }
+    .recommend-card strong { display: block; line-height: 1.35; }
+    .recommend-card span { color: #76655e; font-size: 14px; }
     .preference-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 18px; }
     .check-pill { background: #f5e8e3; border-radius: 999px; padding: 9px 12px; font-size: 14px; }
 
@@ -319,7 +365,7 @@
     footer { padding: 34px 0; color: #8a7a73; text-align: center; }
 
     @media (max-width: 900px) {
-      .hero, .outfit-panel, .cart-layout, .detail-layout { grid-template-columns: 1fr; }
+      .hero, .outfit-panel, .cart-layout, .detail-layout, .profile-layout { grid-template-columns: 1fr; }
       .scenario-grid, .product-grid { grid-template-columns: repeat(2, 1fr); }
       .toolbar { grid-template-columns: 1fr 1fr; }
       .outfit-items { grid-template-columns: repeat(2, 1fr); }
@@ -328,7 +374,7 @@
       .nav { align-items: flex-start; flex-direction: column; padding: 14px 0; }
       .nav-links { justify-content: flex-start; }
       .hero { padding-top: 30px; }
-      .scenario-grid, .product-grid, .toolbar, .preference-grid { grid-template-columns: 1fr; }
+      .scenario-grid, .product-grid, .toolbar, .preference-grid, .profile-fields, .recommend-grid { grid-template-columns: 1fr; }
       .hero-card { min-height: 360px; }
       .product-img { height: 230px; }
       .cart-item { grid-template-columns: 72px 1fr; }
@@ -432,22 +478,47 @@
       <div class="section-title">
         <div>
           <h2>個人偏好設定</h2>
-          <p>設定你的基本資料與穿搭偏好，作為推薦依據。</p>
+          <p>填寫基本資料與穿搭偏好，系統會提供推薦尺寸與適合你的商品。</p>
         </div>
       </div>
-      <div class="profile-box">
-        <label>Contact email</label>
-        <input id="profileEmail" type="email" placeholder="example@mail.com" />
-        <label>Phone Number</label>
-        <input id="profilePhone" type="tel" placeholder="09xxxxxxxx" />
-        <label>Height / Weight</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <input id="profileHeight" type="number" placeholder="身高 cm" />
-          <input id="profileWeight" type="number" placeholder="體重 kg" />
+      <div class="profile-layout">
+        <div class="profile-box">
+          <label>電子信箱</label>
+          <input id="profileEmail" type="email" placeholder="example@mail.com" />
+
+          <label>手機號碼</label>
+          <input id="profilePhone" type="tel" placeholder="09xxxxxxxx" />
+
+          <label>身高 / 體重</label>
+          <p class="profile-hint">用來估算服飾尺寸建議。</p>
+          <div class="profile-fields">
+            <input id="profileHeight" type="number" placeholder="身高 cm" />
+            <input id="profileWeight" type="number" placeholder="體重 kg" />
+          </div>
+
+          <p style="margin-bottom:6px;font-weight:800;">你的穿搭偏好（可複選）</p>
+          <div class="preference-grid" id="preferenceGrid"></div>
+
+          <button class="primary" id="saveProfileBtn" style="width:100%;">儲存偏好</button>
         </div>
-        <p style="margin-bottom:6px;">你的穿搭偏好（可複選）</p>
-        <div class="preference-grid" id="preferenceGrid"></div>
-        <button class="primary" id="saveProfileBtn">Save Changes</button>
+
+        <div>
+          <div class="profile-result-card">
+            <h3>推薦尺寸</h3>
+            <div class="size-badge" id="sizeBadge">—</div>
+            <p id="sizeNote" style="margin:0;color:#786963;">填寫身高與體重後，系統會提供尺寸參考。</p>
+          </div>
+
+          <div class="profile-result-card">
+            <h3>我的偏好摘要</h3>
+            <div class="summary-list" id="profileSummary"></div>
+          </div>
+
+          <div class="profile-result-card">
+            <h3>為你推薦商品</h3>
+            <div class="recommend-grid" id="recommendedProducts"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -570,19 +641,27 @@
     const preferences = ["簡約風格", "韓系穿搭", "正式面試風格", "日常休閒", "約會穿搭", "日系穿搭"];
 
     const defaultProducts = [
-      { id: 1, name: "白色基本襯衫", price: 590, scenario: "interview", category: "上衣", tags: ["乾淨", "正式", "百搭"], img: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=900&q=80", desc: "版型簡單俐落，適合面試、報告或正式場合。", advice: "可搭配西裝褲或深色長裙，讓整體看起來更專業。" },
-      { id: 2, name: "奶茶色針織外套", price: 780, scenario: "date", category: "外套", tags: ["溫柔", "甜美", "有質感"], img: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80", desc: "柔和色調提升親和感，適合約會或出遊拍照。", advice: "內搭白色背心與淺色長裙，整體會更柔和。" },
-      { id: 3, name: "寬鬆條紋上衣", price: 520, scenario: "class", category: "上衣", tags: ["舒適", "簡約", "休閒"], img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80", desc: "寬鬆版型適合長時間上課，活動方便不拘束。", advice: "搭配牛仔褲與帆布包，是低負擔的上課穿搭。" },
-      { id: 4, name: "高腰直筒牛仔褲", price: 890, scenario: "class", category: "下身", tags: ["百搭", "修身", "日常"], img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80", desc: "直筒剪裁修飾腿型，日常上課或逛街都適合。", advice: "上身可搭短版上衣或寬鬆襯衫，平衡比例。" },
-      { id: 5, name: "黑色樂福鞋", price: 990, scenario: "interview", category: "鞋子", tags: ["正式", "好走", "俐落"], img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80", desc: "比高跟鞋更好行走，又保有正式感。", advice: "適合搭配襯衫、西裝褲或長裙。" },
-      { id: 6, name: "帆布托特包", price: 450, scenario: "daily", category: "包包", tags: ["容量大", "輕鬆", "百搭"], img: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80", desc: "可放課本、雨傘與日常小物，適合通勤上課。", advice: "搭配休閒穿搭能增加自然感。" },
-      { id: 7, name: "碎花長裙", price: 860, scenario: "date", category: "下身", tags: ["甜美", "拍照好看", "輕盈"], img: "https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&w=900&q=80", desc: "柔和碎花讓穿搭更有重點，適合約會與出遊。", advice: "搭配素色上衣，避免整體過於複雜。" },
-      { id: 8, name: "灰色短版西裝外套", price: 1280, scenario: "interview", category: "外套", tags: ["專業", "俐落", "修飾比例"], img: "https://images.unsplash.com/photo-1548624149-f9b185a7c4dd?auto=format&fit=crop&w=900&q=80", desc: "短版剪裁讓比例更好，正式但不死板。", advice: "內搭白襯衫或素色上衣，適合報告與面試。" },
-      { id: 9, name: "米色休閒長褲", price: 760, scenario: "daily", category: "下身", tags: ["輕鬆", "百搭", "舒服"], img: "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?auto=format&fit=crop&w=900&q=80", desc: "不挑場合的日常長褲，適合懶得搭配的日子。", advice: "搭配任何素色上衣都不容易出錯。" }
+      { id: 1, name: "白色基本襯衫", price: 590, scenario: "interview", category: "上衣", tags: ["乾淨", "正式", "百搭", "簡約風格", "正式面試風格"], img: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=900&q=80", desc: "版型簡單俐落，適合面試、報告或正式場合。", advice: "可搭配西裝褲或深色長裙，讓整體看起來更專業。" },
+      { id: 2, name: "奶茶色針織外套", price: 780, scenario: "date", category: "外套", tags: ["溫柔", "甜美", "有質感", "約會穿搭", "韓系穿搭"], img: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80", desc: "柔和色調提升親和感，適合約會或出遊拍照。", advice: "內搭白色背心與淺色長裙，整體會更柔和。" },
+      { id: 3, name: "寬鬆條紋上衣", price: 520, scenario: "class", category: "上衣", tags: ["舒適", "簡約", "休閒", "日常休閒", "日系穿搭"], img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80", desc: "寬鬆版型適合長時間上課，活動方便不拘束。", advice: "搭配牛仔褲與帆布包，是低負擔的上課穿搭。" },
+      { id: 4, name: "高腰直筒牛仔褲", price: 890, scenario: "class", category: "下身", tags: ["百搭", "修身", "日常", "日常休閒", "簡約風格"], img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80", desc: "直筒剪裁修飾腿型，日常上課或逛街都適合。", advice: "上身可搭短版上衣或寬鬆襯衫，平衡比例。" },
+      { id: 5, name: "黑色樂福鞋", price: 990, scenario: "interview", category: "鞋子", tags: ["正式", "好走", "俐落", "正式面試風格", "簡約風格"], img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80", desc: "比高跟鞋更好行走，又保有正式感。", advice: "適合搭配襯衫、西裝褲或長裙。" },
+      { id: 6, name: "帆布托特包", price: 450, scenario: "daily", category: "包包", tags: ["容量大", "輕鬆", "百搭", "日常休閒", "日系穿搭"], img: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80", desc: "可放課本、雨傘與日常小物，適合通勤上課。", advice: "搭配休閒穿搭能增加自然感。" },
+      { id: 7, name: "碎花長裙", price: 860, scenario: "date", category: "下身", tags: ["甜美", "拍照好看", "輕盈", "約會穿搭", "日系穿搭"], img: "https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&w=900&q=80", desc: "柔和碎花讓穿搭更有重點，適合約會與出遊。", advice: "搭配素色上衣，避免整體過於複雜。" },
+      { id: 8, name: "灰色短版西裝外套", price: 1280, scenario: "interview", category: "外套", tags: ["專業", "俐落", "修飾比例", "正式面試風格", "簡約風格"], img: "https://images.unsplash.com/photo-1548624149-f9b185a7c4dd?auto=format&fit=crop&w=900&q=80", desc: "短版剪裁讓比例更好，正式但不死板。", advice: "內搭白襯衫或素色上衣，適合報告與面試。" },
+      { id: 9, name: "米色休閒長褲", price: 760, scenario: "daily", category: "下身", tags: ["輕鬆", "百搭", "舒服", "日常休閒", "簡約風格"], img: "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?auto=format&fit=crop&w=900&q=80", desc: "不挑場合的日常長褲，適合懶得搭配的日子。", advice: "搭配任何素色上衣都不容易出錯。" },
+      { id: 10, name: "黑色西裝寬褲", price: 920, scenario: "interview", category: "下身", tags: ["正式", "俐落", "顯瘦", "正式面試風格"], img: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80", desc: "垂墜感西裝寬褲，正式但保有舒適度。", advice: "搭配白襯衫、短版西裝外套與樂福鞋，面試或報告都適合。" },
+      { id: 11, name: "杏色短袖針織衫", price: 650, scenario: "date", category: "上衣", tags: ["溫柔", "韓系", "甜美", "韓系穿搭", "約會穿搭"], img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=900&q=80", desc: "柔和杏色讓整體穿搭更有親和感，適合約會與聚餐。", advice: "可搭配碎花長裙或淺色牛仔褲，整體更清爽。" },
+      { id: 12, name: "白色休閒球鞋", price: 1180, scenario: "class", category: "鞋子", tags: ["好走", "百搭", "清爽", "日常休閒"], img: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=900&q=80", desc: "適合上課、出遊與日常通勤的百搭球鞋。", advice: "可搭配牛仔褲、休閒長褲或洋裝，提升輕鬆感。" },
+      { id: 13, name: "簡約金屬耳環", price: 320, scenario: "date", category: "配件", tags: ["精緻", "簡約", "有質感", "約會穿搭"], img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=80", desc: "小巧不浮誇，可以提升整體穿搭完整度。", advice: "適合搭配針織衫、洋裝或襯衫，增加精緻感。" },
+      { id: 14, name: "卡其風衣外套", price: 1580, scenario: "daily", category: "外套", tags: ["質感", "百搭", "通勤", "簡約風格"], img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80", desc: "卡其色風衣適合日常、通勤與換季穿搭。", advice: "內搭素色上衣與直筒褲，可以打造乾淨俐落的日常風格。" },
+      { id: 15, name: "深藍百褶裙", price: 790, scenario: "class", category: "下身", tags: ["學院", "日系", "修飾", "日系穿搭"], img: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=900&q=80", desc: "百褶設計帶有學院感，適合上課與日常出門。", advice: "搭配條紋上衣或白色襯衫，能呈現清爽日系感。" },
+      { id: 16, name: "黑色迷你肩背包", price: 690, scenario: "date", category: "包包", tags: ["精緻", "百搭", "約會穿搭", "韓系穿搭"], img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80", desc: "小容量但外型俐落，適合約會、聚餐與出遊。", advice: "搭配洋裝或針織外套，可以讓整體更有重點。" },
+      { id: 17, name: "深色直筒西裝裙", price: 880, scenario: "interview", category: "下身", tags: ["正式", "專業", "俐落", "正式面試風格"], img: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=900&q=80", desc: "線條簡單的西裝裙，適合面試、報告與實習場合。", advice: "搭配白色襯衫與短版外套，正式但不過度沉重。" },
+      { id: 18, name: "米白棒球帽", price: 390, scenario: "daily", category: "配件", tags: ["休閒", "遮陽", "輕鬆", "日常休閒"], img: "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=900&q=80", desc: "簡單的米白色棒球帽，適合日常休閒穿搭。", advice: "搭配帆布托特包與休閒長褲，整體更自然。" }
     ];
-
     let currentUser = localStorage.getItem("currentUser") || null;
-    let products = load("products", defaultProducts);
+    let products = mergeDefaultProducts(load("products", []));
     let cart = load(userKey("cart"), []);
     let selectedDetailId = null;
     let editingId = null;
@@ -592,6 +671,17 @@
     function load(key, fallback) {
       try { return JSON.parse(localStorage.getItem(key)) || fallback; }
       catch { return fallback; }
+    }
+    function mergeDefaultProducts(savedProducts) {
+      const saved = Array.isArray(savedProducts) ? savedProducts : [];
+      const merged = [...defaultProducts];
+      saved.forEach(item => {
+        const index = merged.findIndex(p => p.id === item.id);
+        if (index >= 0) merged[index] = { ...merged[index], ...item };
+        else merged.push(item);
+      });
+      save("products", merged);
+      return merged;
     }
     function userKey(base) {
       return currentUser ? `${base}_${currentUser}` : base;
@@ -825,22 +915,93 @@
       document.getElementById("preferenceGrid").innerHTML = preferences.map(p => `
         <label class="check-pill"><input type="checkbox" value="${p}" ${profile.preferences?.includes(p) ? "checked" : ""}> ${p}</label>
       `).join("");
+      updateProfileResults(profile);
     }
-    document.getElementById("saveProfileBtn").addEventListener("click", () => {
-      if (!currentUser) {
-        showToast("請先登入會員，才能儲存個人偏好");
-        go("login");
-        return;
-      }
-      const profile = {
+
+    function getCurrentProfileFromForm() {
+      return {
         email: document.getElementById("profileEmail").value,
         phone: document.getElementById("profilePhone").value,
         height: document.getElementById("profileHeight").value,
         weight: document.getElementById("profileWeight").value,
         preferences: [...document.querySelectorAll("#preferenceGrid input:checked")].map(i => i.value)
       };
+    }
+
+    function getRecommendedSize(height, weight) {
+      const h = Number(height);
+      const w = Number(weight);
+      if (!h && !w) return { size: "—", note: "填寫身高與體重後，系統會提供尺寸參考。" };
+      let score = 0;
+      if (h <= 155) score += 0;
+      else if (h <= 165) score += 1;
+      else if (h <= 172) score += 2;
+      else score += 3;
+      if (w >= 60) score += 1;
+      if (w >= 72) score += 1;
+      const sizes = ["S", "M", "L", "XL", "XL"];
+      const size = sizes[Math.min(score, sizes.length - 1)];
+      return { size, note: `依照你填寫的身高體重，建議先參考 ${size} 號，實際仍可依版型調整。` };
+    }
+
+    function getRecommendedProducts(profile) {
+      const prefs = profile.preferences || [];
+      if (!prefs.length) return products.slice(0, 4);
+      const scored = products.map(p => {
+        const text = [p.name, p.category, p.desc, p.scenario, ...(p.tags || [])].join(" ");
+        const score = prefs.reduce((sum, pref) => sum + (text.includes(pref) ? 2 : 0), 0)
+          + prefs.reduce((sum, pref) => {
+            if (pref.includes("面試") && p.scenario === "interview") return sum + 2;
+            if (pref.includes("約會") && p.scenario === "date") return sum + 2;
+            if (pref.includes("日常") && p.scenario === "daily") return sum + 2;
+            if (pref.includes("日系") && (p.tags || []).includes("日系")) return sum + 2;
+            if (pref.includes("韓系") && (p.tags || []).includes("韓系")) return sum + 2;
+            if (pref.includes("簡約") && (p.tags || []).includes("簡約")) return sum + 2;
+            return sum;
+          }, 0);
+        return { ...p, score };
+      });
+      return scored.sort((a, b) => b.score - a.score || a.price - b.price).slice(0, 4);
+    }
+
+    function updateProfileResults(profile = getCurrentProfileFromForm()) {
+      const size = getRecommendedSize(profile.height, profile.weight);
+      document.getElementById("sizeBadge").textContent = size.size;
+      document.getElementById("sizeNote").textContent = size.note;
+      document.getElementById("profileSummary").innerHTML = `
+        <div><span>登入狀態</span><strong>${currentUser ? currentUser : "尚未登入"}</strong></div>
+        <div><span>身高 / 體重</span><strong>${profile.height || "—"} cm / ${profile.weight || "—"} kg</strong></div>
+        <div><span>穿搭偏好</span><strong>${profile.preferences?.length ? profile.preferences.join("、") : "尚未選擇"}</strong></div>
+      `;
+      const recommended = getRecommendedProducts(profile);
+      document.getElementById("recommendedProducts").innerHTML = recommended.map(p => `
+        <div class="recommend-card" onclick="openDetail(${p.id})">
+          <div class="recommend-img" style="${imageStyle(p.img)}"></div>
+          <div>
+            <strong>${p.name}</strong>
+            <span>${money(p.price)}｜${scenarios.find(s => s.id === p.scenario)?.name || p.scenario}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("saveProfileBtn").addEventListener("click", () => {
+      if (!currentUser) {
+        showToast("請先登入會員，才能儲存個人偏好");
+        go("login");
+        return;
+      }
+      const profile = getCurrentProfileFromForm();
       save(userKey("profile"), profile);
+      updateProfileResults(profile);
       showToast("偏好設定已儲存");
+    });
+
+    ["profileHeight", "profileWeight"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => updateProfileResults());
+    });
+    document.addEventListener("change", e => {
+      if (e.target.matches("#preferenceGrid input")) updateProfileResults();
     });
 
     function renderAdmin() {
