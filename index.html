@@ -299,14 +299,6 @@
       font-size: 14px;
       white-space: nowrap;
     }
-    .member-note {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 16px;
-      background: #fbf3ee;
-      color: #6d5b54;
-      font-size: 14px;
-    }
 
     .toast {
       position: fixed;
@@ -440,7 +432,7 @@
       <div class="section-title">
         <div>
           <h2>個人偏好設定</h2>
-          <p>輸入身高、體重與穿搭偏好，之後可以作為推薦依據。這版先存在瀏覽器中。</p>
+          <p>設定你的基本資料與穿搭偏好，作為推薦依據。</p>
         </div>
       </div>
       <div class="profile-box">
@@ -463,7 +455,7 @@
       <div class="section-title">
         <div>
           <h2>會員登入 / 註冊</h2>
-          <p>登入後可以分開儲存每位會員的個人偏好與購物車紀錄，模擬服飾電商平台的會員功能。</p>
+          <p>登入後可以使用會員偏好與購物車紀錄。</p>
         </div>
       </div>
       <div class="login-box">
@@ -482,10 +474,6 @@
         </div>
 
         <p id="loginMessage"></p>
-
-        <div class="member-note">
-          目前版本使用 localStorage 模擬會員資料，適合課程 Prototype 展示；正式上線時應改用後端資料庫並進行密碼加密。
-        </div>
       </div>
     </section>
 
@@ -493,7 +481,7 @@
       <div class="section-title">
         <div>
           <h2>商品管理</h2>
-          <p>對應作業可能需要的新增、查詢、修改、刪除、顯示所有商品功能。資料會存在瀏覽器 localStorage。</p>
+          <p>管理商品資料，包含新增、修改、刪除與顯示商品。</p>
         </div>
       </div>
       <div class="admin-box">
@@ -567,7 +555,7 @@
     </div>
   </dialog>
 
-  <footer>© 2026 Today Wear｜課程期末專案示範版</footer>
+  <footer>© 2026 Today Wear</footer>
   <div class="toast" id="toast">已完成</div>
 
   <script>
